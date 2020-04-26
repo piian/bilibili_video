@@ -51,6 +51,7 @@ def get_info(cid):
     start_url = 'https://api.bilibili.com/x/web-interface/view?aid=' + cid
     response = requests.get(start_url).json()
     title = response['data']['title']
+    title = 'downloads/' + title
     pages = response['data']['pages']
     if os.path.exists(title) is False:
         os.mkdir(title)
