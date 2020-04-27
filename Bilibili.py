@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup
 from download_file import download
 
 
+# 该类已弃用，是旧的方法
 class Bilibili:
     def __init__(self):
         requests.packages.urllib3.disable_warnings()
