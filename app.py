@@ -21,5 +21,5 @@ cid = '91328144'  # PHP实现并发百万的协程场景使用及分析
 client = Bilibili()
 uid = '511491630'
 # https://api.bilibili.com/x/space/arc/search?mid=511491630&pn=1&ps=100&jsonp=jsonp
-cid = input('请输入aid')
+cid = input('请输入aid:')
 client.get_list(cid)
