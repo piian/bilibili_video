@@ -16,7 +16,10 @@ cid = '90856027'  # PHP高并发解决方案-服务通讯rpc接口开发 （完�
 
 cid = '752922075'  # 单人
 cid = '242936413'  # 测试
+cid = '91328144'  # PHP实现并发百万的协程场景使用及分析
 
 client = Bilibili()
-
+uid = '511491630'
+# https://api.bilibili.com/x/space/arc/search?mid=511491630&pn=1&ps=100&jsonp=jsonp
+cid = input('请输入aid')
 client.get_list(cid)
