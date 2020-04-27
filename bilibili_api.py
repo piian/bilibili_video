@@ -16,6 +16,8 @@ class Bilibili():
         'Origin': 'https://www.bilibili.com',
         'Connection': 'keep-alive',
     }
+    appkey = 'iVGUTjsxvpLeuDCf'  # appkey
+    sec = 'aHRmhWMLkdeMuILqORnYZocwMBpMEOdt'  # 秘钥
 
     def get_list(self, cid):
         info = self.get_info(cid)
@@ -28,6 +30,7 @@ class Bilibili():
 
     @staticmethod
     def get_info(cid):
+        """获取视频信息"""
         start_url = 'https://api.bilibili.com/x/web-interface/view?aid=' + cid
         response = requests.get(start_url).json()
         title = response['data']['title']
@@ -38,15 +41,13 @@ class Bilibili():
         return {'title': title, "pages": [{'part': page['part'], 'cid': page['cid']} for page in pages]}
 
     def get_url(self, page, file_name):
-        """获取每个链接"""
+        """获取每个链接并下载"""
         cid = page['cid']
         part = page['part']
         # 打印当前视频标题
         print(part)
-        appkey = 'iVGUTjsxvpLeuDCf'
-        sec = 'aHRmhWMLkdeMuILqORnYZocwMBpMEOdt'
-        params = 'appkey=%s&cid=%s&otype=json&qn=%s&quality=%s&type=' % (appkey, cid, 80, 80)
-        sign = hashlib.md5(bytes(params + sec, 'utf8')).hexdigest()
+        params = 'appkey=%s&cid=%s&otype=json&qn=%s&quality=%s&type=' % (self.appkey, cid, 80, 80)
+        sign = hashlib.md5(bytes(params + self.sec, 'utf8')).hexdigest()
         url_api = 'https://interface.bilibili.com/v2/playurl?%s&sign=%s' % (params, sign)
         headers = {
             'Referer': 'www.bilibili.com',  # 注意加上referer
