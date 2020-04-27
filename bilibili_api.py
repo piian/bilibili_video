@@ -2,8 +2,7 @@ import hashlib
 import os
 
 import requests
-
-from download_file import download
+from tqdm import tqdm
 
 
 class Bilibili():
@@ -58,7 +57,7 @@ class Bilibili():
         # exit()
         if len(html['durl']) == 1:
             # 如果只有一个链接，则表示单视频
-            download(html['durl'][0]['url'], file_name + '/' + part + '.mp4', self.next_headers)
+            self.download(html['durl'][0]['url'], file_name + '/' + part + '.mp4', self.next_headers)
         else:
             # 否则是列表
             temps = []
@@ -67,17 +66,37 @@ class Bilibili():
                 exit()
                 temp = file_name + '/' + part + '.tmp'
                 temps.append(temp)
-                download(i['url'], temp, self.next_headers)
+                self.download(i['url'], temp, self.next_headers)
         return video_list
 
     @staticmethod
-    def merge_video(audio, title, video):
+    def download(url, file, headers):
         """
-        合并音频和视频
-        :param audio:
-        :param title:
-        :param video:
+        下载文件、写入文件到缓存文件、显示当前进度
+        :param url:
+        :param file:
+        :param headers:
         """
-        os.system('ffmpeg -y -i ' + video + ' -i ' + audio + ' -vcodec copy -acodec copy ' + title + '.mp4')
-        os.remove(video)
-        os.remove(audio)
+        r = requests.get(url, headers=headers, stream=True, timeout=5)
+        # 获取总长度
+        length = r.headers['Content-Length']
+        exists = os.path.exists(file)
+        if exists:
+            size = os.path.getsize(file)
+            if size == int(length):
+                print("已存在文件，并且大小一致，跳过下载")
+                return
+        # 打开文件
+        f = open(file, 'wb')
+        # 初始化进度条并设置标题
+        pbar = tqdm(total=int(length))
+        for chunk in r.iter_content(chunk_size=2048):
+            if chunk:
+                # 进度条更新每次数据的长度
+                pbar.update(len(chunk))
+                # 写入到文件里
+                f.write(chunk)
+        # 关闭进度条
+        pbar.close()
+        # 关闭文件
+        f.close()
