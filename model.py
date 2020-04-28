@@ -55,7 +55,7 @@ def get_play_list(aid):
     start_url = 'https://api.bilibili.com/x/web-interface/view?aid=' + str(aid)
     response = requests.get(start_url).json()
     data = response['data']
-    
+
     count = PlayList.select(PlayList.aid).where(PlayList.aid == data['aid']).count()
     print(data['aid'])
     if count == 0:
@@ -91,7 +91,4 @@ if __name__ == '__main__':
     response = requests.get('https://api.bilibili.com/x/space/arc/search?mid=' + str(mid) + '&pn=1&ps=100&jsonp=jsonp')
     result = response.json()
     for vlist in result['data']['list']['vlist']:
-        # print(vlist)
         get_play_list(vlist['aid'])
-
-    # aid = 91602299

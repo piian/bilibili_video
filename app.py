@@ -1,25 +1,24 @@
+import os
+
 from bilibili_api import Bilibili
+from model import PlayList
 
-cid = '19516333'
-# 短
-cid = '32170391'
-# 系列
-cid = '32317625'
-# 3小时教你入门numpy
-cid = '50452482'
-cid = '32170391'
-cid = '19817183'
-cid = '98652168'
-cid = '94404010'  # 大型网站Mysql性能优化之索引原理分析 (完成)
-cid = '97555923'  # 2020PHP高级面试跳槽必备技术—高可用MySQL优化方案之分库分表 （完成）
-cid = '90856027'  # PHP高并发解决方案-服务通讯rpc接口开发 （完成）
+if __name__ == '__main__':
 
-cid = '752922075'  # 单人
-cid = '242936413'  # 测试
-cid = '91328144'  # PHP实现并发百万的协程场景使用及分析
-
-client = Bilibili()
-uid = '511491630'
-# https://api.bilibili.com/x/space/arc/search?mid=511491630&pn=1&ps=100&jsonp=jsonp
-cid = input('请输入aid:')
-client.get_list(cid)
+    client = Bilibili()
+    # cid = input('请输入aid:')
+    # client.get_list(cid)
+    list = PlayList.select().where(PlayList.is_completed == False)
+    for play in list:
+        title = 'downloads/' + play.title
+        if os.path.exists(title) is False:
+            os.mkdir(title)
+        for video in play.videos:
+            print(play.title)
+            client.get_url(video.cid, video.title, title)
+            video.is_completed = True
+            video.save()
+            print(video.title)
+        play.is_completed = True
+        play.save()
+    # client.get_url(cid, filename, title)
