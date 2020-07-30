@@ -78,8 +78,30 @@ def get_play_list(aid):
             video = Video.create(cid=page['cid'], title=page['part'], is_completed=0, play_list=play_list)
             print(video.id)
 
+def inserListByAid(aid):
+    """ 根据 视频专辑 aid 插入视频到 播放列表 """
+    get_play_list(aid)
+
+def printListByAid(aid):
+    list = PlayList.select().where(PlayList.aid == aid).first()
+    print(list.title)
+    print( "下载进度"+str(list.videos.where(Video.is_completed == True).count()) +"/"+ str(list.videos.count()))
+    # for a in list.videos:
+        # print(a.title, a.is_completed)
+
 
 if __name__ == '__main__':
+    
+    lists = PlayList.select()
+    for play in lists:
+        printListByAid(play.aid)
+        # print(play.title)
+    # inserListByAid('38657363')
+    printListByAid('38657363')
+    # get_play_list('838569714')
+    exit()
+
+
     # video = Video.get_by_id(1)
     # print(video.title)
     # exit()
@@ -87,6 +109,7 @@ if __name__ == '__main__':
     # Video.drop_table()
     # PlayList.create_table()
     # Video.create_table()
+    # 用户id
     mid = 511491630
     response = requests.get('https://api.bilibili.com/x/space/arc/search?mid=' + str(mid) + '&pn=1&ps=100&jsonp=jsonp')
     result = response.json()

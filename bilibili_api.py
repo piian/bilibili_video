@@ -26,7 +26,9 @@ class Bilibili():
         print(title)
         print('一共' + str(len(info['pages'])) + '视频')
         for vid in info['pages']:
-            self.get_url(vid[cid], vid['part'], title)
+            # 打印当前视频标题
+            print(vid['part'])
+            self.get_url(vid['cid'], vid['part'], title)
 
     @staticmethod
     def get_info(cid):
@@ -40,10 +42,8 @@ class Bilibili():
             os.mkdir(title)
         return {'title': title, "pages": [{'part': page['part'], 'cid': page['cid']} for page in pages]}
 
-    def get_url(self, cid, filename, title):
+    def get_url(self, cid, filename, path):
         """获取每个链接并下载"""
-        # 打印当前视频标题
-        print(filename)
         params = 'appkey=%s&cid=%s&otype=json&qn=%s&quality=%s&type=' % (self.appkey, cid, 80, 80)
         sign = hashlib.md5(bytes(params + self.sec, 'utf8')).hexdigest()
         url_api = 'https://interface.bilibili.com/v2/playurl?%s&sign=%s' % (params, sign)
@@ -56,14 +56,14 @@ class Bilibili():
         # exit()
         if len(html['durl']) == 1:
             # 如果只有一个链接，则表示单视频
-            self.download(html['durl'][0]['url'], title + '/' + filename + '.mp4', self.next_headers)
+            self.download(html['durl'][0]['url'], path + '/' + filename + '.mp4', self.next_headers)
         else:
             # 否则是列表
             temps = []
             for i in html['durl']:
                 print(i)
                 exit()
-                temp = title + '/' + filename + '.tmp'
+                temp = path + '/' + filename + '.tmp'
                 temps.append(temp)
                 self.download(i['url'], temp, self.next_headers)
         return video_list
