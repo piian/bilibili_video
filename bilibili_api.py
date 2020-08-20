@@ -35,6 +35,7 @@ class Bilibili():
         """获取视频信息"""
         start_url = 'https://api.bilibili.com/x/web-interface/view?aid=' + cid
         response = requests.get(start_url).json()
+        print(response)
         title = response['data']['title']
         title = 'downloads/' + title
         pages = response['data']['pages']
@@ -44,9 +45,11 @@ class Bilibili():
 
     def get_url(self, cid, filename, path):
         """获取每个链接并下载"""
-        params = 'appkey=%s&cid=%s&otype=json&qn=%s&quality=%s&type=' % (self.appkey, cid, 80, 80)
+        params = 'appkey=%s&cid=%s&otype=json&qn=%s&quality=%s&type=' % (
+            self.appkey, cid, 80, 80)
         sign = hashlib.md5(bytes(params + self.sec, 'utf8')).hexdigest()
-        url_api = 'https://interface.bilibili.com/v2/playurl?%s&sign=%s' % (params, sign)
+        url_api = 'https://interface.bilibili.com/v2/playurl?%s&sign=%s' % (
+            params, sign)
         headers = {
             'Referer': 'www.bilibili.com',  # 注意加上referer
         }
@@ -56,7 +59,8 @@ class Bilibili():
         # exit()
         if len(html['durl']) == 1:
             # 如果只有一个链接，则表示单视频
-            self.download(html['durl'][0]['url'], path + '/' + filename + '.mp4', self.next_headers)
+            self.download(html['durl'][0]['url'], path +
+                          '/' + filename + '.mp4', self.next_headers)
         else:
             # 否则是列表
             temps = []
@@ -76,7 +80,8 @@ class Bilibili():
         :param file:
         :param headers:
         """
-        r = requests.get(url, headers=headers, stream=True, timeout=5)
+        print(url)
+        r = requests.get(url, headers=headers, stream=True, timeout=50)
         # 获取总长度
         length = r.headers['Content-Length']
         exists = os.path.exists(file)
