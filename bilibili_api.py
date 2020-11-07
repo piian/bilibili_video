@@ -35,9 +35,12 @@ class Bilibili():
         """获取视频信息"""
         start_url = 'https://api.bilibili.com/x/web-interface/view?aid=' + cid
         response = requests.get(start_url).json()
+        downloadPath = "downloads"
         print(response)
         title = response['data']['title']
-        title = 'downloads/' + title
+        if os.path.exists(downloadPath) is False:
+            os.mkdir(downloadPath)
+        title = downloadPath + '/' + title
         pages = response['data']['pages']
         if os.path.exists(title) is False:
             os.mkdir(title)

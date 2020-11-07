@@ -1,4 +1,5 @@
 import os
+import sys
 
 from bilibili_api import Bilibili
 
@@ -7,18 +8,27 @@ from bilibili_api import Bilibili
 # 668766982   谷粒商城-分布式高级篇-1
 # 838831843   谷粒商城-分布式高级篇-2
 # 413804162   谷粒商城-分布式高级篇-3
+# 245071647   2020微服务分布式电商项目《谷粒商城》高级和集群篇
 if __name__ == '__main__':
     # 单次下载，每次下载一个集合
     client = Bilibili()
-    cid = '838831843'
+    cid = '245071647'
     info = client.get_info(cid)
     path = info['title']
     if os.path.exists(path) is False:
         os.mkdir(path)
     print('一共%s个视频' % str(len(info['pages'])))
     i = 0
+
+    if len(sys.argv) == 2:
+        j = sys.argv[1]
+        for video in info['pages']:
+            i += 1
+            if i == int(j):
+                print(video['part'])
+                client.get_url(video['cid'], video['part'], path)
+        exit()
     for video in info['pages']:
         i += 1
-        if i > 0:
-            print(video['part'])
-            client.get_url(video['cid'], video['part'], path)
+        print(video['part'])
+        client.get_url(video['cid'], video['part'], path)

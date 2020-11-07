@@ -22,3 +22,4 @@ typed-ast==1.4.0
 urllib3==1.25.6
 webencodings==0.5.1
 wrapt==1.11.2
+peewee

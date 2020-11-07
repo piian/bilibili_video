@@ -91,13 +91,13 @@ def printListByAid(aid):
 
 
 if __name__ == '__main__':
-    
+
     lists = PlayList.select()
     for play in lists:
         printListByAid(play.aid)
         # print(play.title)
     # inserListByAid('38657363')
-    printListByAid('38657363')
+    # printListByAid('38657363')
     # get_play_list('838569714')
     exit()
 
@@ -105,13 +105,13 @@ if __name__ == '__main__':
     # video = Video.get_by_id(1)
     # print(video.title)
     # exit()
-    # PlayList.drop_table()
-    # Video.drop_table()
-    # PlayList.create_table()
-    # Video.create_table()
+    PlayList.drop_table()
+    Video.drop_table()
+    PlayList.create_table()
+    Video.create_table()
     # 用户id
-    mid = 511491630
-    response = requests.get('https://api.bilibili.com/x/space/arc/search?mid=' + str(mid) + '&pn=1&ps=100&jsonp=jsonp')
-    result = response.json()
-    for vlist in result['data']['list']['vlist']:
-        get_play_list(vlist['aid'])
+    # mid = 511491630
+    # response = requests.get('https://api.bilibili.com/x/space/arc/search?mid=' + str(mid) + '&pn=1&ps=100&jsonp=jsonp')
+    # result = response.json()
+    # for vlist in result['data']['list']['vlist']:
+    #     get_play_list(vlist['aid'])
