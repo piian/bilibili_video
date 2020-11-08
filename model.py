@@ -16,6 +16,10 @@ class PlayList(BaseModel):
     author = CharField(null=True)
     is_completed = BooleanField(default=False, )
 
+    def __str__(self):
+        return self.__data__
+
+
     def insert_data(self, data):
         count = self.select(self.aid == data['aid']).count()
         print(data['aid'])
@@ -92,12 +96,12 @@ def printListByAid(aid):
 
 if __name__ == '__main__':
 
-    lists = PlayList.select()
-    for play in lists:
-        printListByAid(play.aid)
+    # lists = PlayList.select()
+    # for play in lists:
+    #     printListByAid(play.aid)
         # print(play.title)
-    # inserListByAid('38657363')
-    # printListByAid('38657363')
+    # inserListByAid('669994685')
+    printListByAid('669994685')
     # get_play_list('838569714')
     exit()
 

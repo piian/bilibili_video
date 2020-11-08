@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="//unpkg.com/element-ui@2.14.0/lib/theme-chalk/index.css">
+</head>
+<body>
+    <div id="app">
+<template>
+    <el-table
+      :data="tableData"
+      style="width: 100%">
+      <el-table-column
+        prop="aid">
+      </el-table-column>
+      <el-table-column
+        prop="title" >
+          <template slot-scope="scope">
+          <el-link type="primary" :href="'/play/'+scope.row.id" v-html="scope.row.title"></el-link>
+          </template>
+      </el-table-column>
+      <el-table-column
+        label="is_completed"
+        >
+          <template slot-scope="scope">
+              <span v-text="scope.row.is_completed ? '已完成' : '未完成'">1212</span>
+          </template>
+      </el-table-column>
+    </el-table>
+  </template>
+</div>
+    <script src="//unpkg.com/vue/dist/vue.js"></script>
+<script src="//unpkg.com/element-ui@2.14.0/lib/index.js"></script>
+    <script>
+        let data = {{list|tojson}}
+        console.log(data)
+        var Main = {
+      data() {
+        return {
+          tableData: data
+        }
+      }
+    }
+var Ctor = Vue.extend(Main)
+new Ctor().$mount('#app')
+    </script>
+</body>
+</html>

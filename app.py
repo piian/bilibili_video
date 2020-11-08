@@ -1,38 +1,26 @@
-import os
+from flask import Flask, render_template, jsonify, json
+from playhouse.shortcuts import model_to_dict
 
-from bilibili_api import Bilibili
-from model import PlayList
+from model import PlayList, Video
 
-def download_by_aid(aid):
-    """根据已经插入到数据库中的aid 去下载"""
-    client = Bilibili()
-    list = PlayList.select().where(PlayList.is_completed == False).where(PlayList.aid == '38657363')
-    for play in list:
-        # 播放列表名称
-        print(play.title)
-        path = 'downloads/' + play.title
-        if os.path.exists(path) is False:
-            os.mkdir(path)
-        print('一共%s个视频' % str(len(play.videos)))
-        for video in play.videos:
-            print(video.title)
-            client.get_url(video.cid, video.title, path)
-            # 完成该视频
-            video.is_completed = True
-            video.save()
+app = Flask(__name__)
 
-        # 完成播放列表
-        play.is_completed = True
-        play.save()
 
-def download_url_aid():
-    """根据输入的aid 下载视频 不保存到数据库"""
-    client = Bilibili()
-    cid = input('请输入aid:')
-    client.get_list(cid)
+def models_to_dict(models):
+    return [model_to_dict(model) for model in models]
 
+
+@app.route('/')
+def hello_world():
+    list = PlayList.select()
+    return render_template('play_list.html', list=models_to_dict(list))
+
+@app.route("/play/<int:play_id>")
+def play(play_id):
+    play = PlayList.select().where(PlayList.id == play_id).first()
+    videos = Video.select().where(Video.play_list_id == play_id)
+    return render_template("play.html", play=play, videos=models_to_dict(videos))
 
 if __name__ == '__main__':
-
-    # download_url_aid()
-    download_by_aid("38657363")
+    app.debug = True
+    app.run()

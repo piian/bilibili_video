@@ -1,25 +1,32 @@
 import os
 
 from bilibili_api import Bilibili
+from model import PlayList, Video, inserListByAid
 
-# 838569714   2020年黑马SSM最新就业班Spring+SpringMVC+Mybatis教程
-# 38657363    SpringBoot_权威教程_spring boot_springboot核心篇+springboot整合篇-_雷丰阳_尚硅谷
-# 668766982   谷粒商城-分布式高级篇-1
 if __name__ == '__main__':
     # 单次下载，每次下载一个集合
+    # 73576628
+    aid = input("请输入你要下载的avid：")
     client = Bilibili()
-    # cid = '668766982'
-    # av456393445
-    cid = '456393445'
+    if aid != '':
+        inserListByAid(str(aid))
+    else:
+        list = PlayList.select()
+        for play in list:
+            print(" / ".join([str(play.id), play.aid, play.title]))
+        id = input("请输入你要下载的视频集：")
+        play = PlayList.select().where(PlayList.id == id).first()
+        videos = Video.select().where(Video.play_list_id == id)
+        for video in videos:
+            print(" / ".join([str(video.id), str(video.cid), str(video.is_completed), video.title]))
+        vid = input("请输入你要下载的视频,0下载全部：")
+        if id == 0:
+            pass
+        else:
+            video = Video.select().where(Video.id == vid).first()
+            print("开始下载"+video.title+"，视频集："+play.title)
+            client.get_url(video.cid, video.title, 'downloads/'+play.title)
 
-    info = client.get_info(cid)
-    path = info['title']
-    if os.path.exists(path) is False:
-        os.mkdir(path)
-    print('一共%s个视频' % str(len(info['pages'])))
-    i = 0
-    for video in info['pages']:
-        i += 1
-        if i > 71:
-            print(video['part'])
-            client.get_url(video['cid'], video['part'], path)
+# print("id:"+str(play.id), " / "+play.title)
+    # list = PlayList.select().where(PlayList.aid == aid).first()
+    # print(list.title)

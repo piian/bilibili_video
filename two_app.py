@@ -9,10 +9,11 @@ from bilibili_api import Bilibili
 # 838831843   谷粒商城-分布式高级篇-2
 # 413804162   谷粒商城-分布式高级篇-3
 # 245071647   2020微服务分布式电商项目《谷粒商城》高级和集群篇
+# 669994685   谷粒商城-高级（包含错漏）
 if __name__ == '__main__':
     # 单次下载，每次下载一个集合
     client = Bilibili()
-    cid = '245071647'
+    cid = '669994685'
     info = client.get_info(cid)
     path = info['title']
     if os.path.exists(path) is False:

@@ -58,7 +58,6 @@ class Bilibili():
         }
         html = requests.get(url_api, headers=headers).json()
         video_list = []
-        # print(html['durl'])  # 打印数据
         # exit()
         if len(html['durl']) == 1:
             # 如果只有一个链接，则表示单视频
@@ -76,6 +75,14 @@ class Bilibili():
         return video_list
 
     @staticmethod
+    def checkExists(file):
+        exists = os.path.exists(file)
+        if exists:
+            return True
+        else:
+            return False
+
+    @staticmethod
     def download(url, file, headers):
         """
         下载文件、写入文件到缓存文件、显示当前进度
@@ -83,7 +90,7 @@ class Bilibili():
         :param file:
         :param headers:
         """
-        print(url)
+        # print(url)
         r = requests.get(url, headers=headers, stream=True, timeout=50)
         # 获取总长度
         length = r.headers['Content-Length']
