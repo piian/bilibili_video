@@ -14,11 +14,10 @@ class PlayList(BaseModel):
     description = CharField(null=True)
     pic = CharField(null=True)
     author = CharField(null=True)
-    is_completed = BooleanField(default=False, )
+    is_completed = BooleanField(default=False)
 
     def __str__(self):
         return self.__data__
-
 
     def insert_data(self, data):
         count = self.select(self.aid == data['aid']).count()
@@ -43,11 +42,12 @@ class Video(BaseModel):
     cid = IntegerField(default=0, unique=True)
     is_completed = BooleanField(default=False)
     play_list = ForeignKeyField(PlayList, backref='videos')
+    size = IntegerField(default=0)
 
     def insert_data(self, data, play):
         count = self.select(self.cid == data['cid']).count()
-        print(count)
-        print(data)
+        # print(count)
+        # print(data)
         if count == 0:
             return self.create(cid=data['cid'], title=data['part'], is_completed=0, play_list=play)
         else:
@@ -82,29 +82,29 @@ def get_play_list(aid):
             video = Video.create(cid=page['cid'], title=page['part'], is_completed=0, play_list=play_list)
             print(video.id)
 
+
 def inserListByAid(aid):
     """ 根据 视频专辑 aid 插入视频到 播放列表 """
     get_play_list(aid)
 
+
 def printListByAid(aid):
     list = PlayList.select().where(PlayList.aid == aid).first()
     print(list.title)
-    print( "下载进度"+str(list.videos.where(Video.is_completed == True).count()) +"/"+ str(list.videos.count()))
+    print("下载进度" + str(list.videos.where(Video.is_completed == True).count()) + "/" + str(list.videos.count()))
     # for a in list.videos:
-        # print(a.title, a.is_completed)
+    # print(a.title, a.is_completed)
 
 
 if __name__ == '__main__':
-
     # lists = PlayList.select()
     # for play in lists:
     #     printListByAid(play.aid)
-        # print(play.title)
+    # print(play.title)
     # inserListByAid('669994685')
     printListByAid('669994685')
     # get_play_list('838569714')
     exit()
-
 
     # video = Video.get_by_id(1)
     # print(video.title)

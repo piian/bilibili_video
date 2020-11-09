@@ -1,7 +1,7 @@
 import os
 import sys
 
-from bilibili_api import Bilibili
+from app.bilibili_api import Bilibili
 
 # 838569714   2020年黑马SSM最新就业班Spring+SpringMVC+Mybatis教程
 # 38657363    SpringBoot_权威教程_spring boot_springboot核心篇+springboot整合篇-_雷丰阳_尚硅谷

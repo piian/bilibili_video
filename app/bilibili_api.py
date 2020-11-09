@@ -3,6 +3,7 @@ import os
 
 import requests
 from tqdm import tqdm
+from app.model import PlayList, Video
 
 
 class Bilibili():
@@ -114,3 +115,13 @@ class Bilibili():
         pbar.close()
         # 关闭文件
         f.close()
+
+    def downloadById(self, id):
+        video = Video.select().where(Video.id == id).first()
+        play = PlayList.select().where(PlayList.id == video.play_list_id).first()
+
+        print("开始下载"+video.title+"，视频集："+play.title)
+        downloadPath = 'downloads/'+play.title
+        if os.path.exists(downloadPath) is False:
+            os.mkdir(downloadPath)
+        self.get_url(video.cid, video.title, downloadPath)
