@@ -55,13 +55,13 @@ class Video(BaseModel):
             # return self.get(Video.cid == data['cid'])
 
 
-def get_play_list(aid):
-    start_url = 'https://api.bilibili.com/x/web-interface/view?aid=' + str(aid)
+def get_play_list(bvid):
+    # aid
+    start_url = 'https://api.bilibili.com/x/web-interface/view?bvid=' + str(bvid)
     response = requests.get(start_url).json()
     data = response['data']
 
     count = PlayList.select(PlayList.aid).where(PlayList.aid == data['aid']).count()
-    print(data['aid'])
     if count == 0:
         print(1)
         insert = {
@@ -97,6 +97,10 @@ def printListByAid(aid):
 
 
 if __name__ == '__main__':
+    # start_url = 'https://api.bilibili.com/x/web-interface/view?bvid=' + str('BV1Uy4y1B7zh')
+    # response = requests.get(start_url).json()
+    # print(response)
+    # exit()
     # lists = PlayList.select()
     # for play in lists:
     #     printListByAid(play.aid)

@@ -9,44 +9,69 @@
     <link rel="stylesheet" href="//unpkg.com/element-ui@2.14.0/lib/theme-chalk/index.css">
 </head>
 <body>
-    <div id="app">
-<template>
-    <el-table
-      :data="tableData"
-      style="width: 100%">
-      <el-table-column
-        prop="aid">
-      </el-table-column>
-      <el-table-column
-        prop="title" >
-          <template slot-scope="scope">
-          <el-link type="primary" :href="'/play/'+scope.row.id" v-html="scope.row.title"></el-link>
-          </template>
-      </el-table-column>
-      <el-table-column
-        label="is_completed"
-        >
-          <template slot-scope="scope">
-              <span v-text="scope.row.is_completed ? '已完成' : '未完成'">1212</span>
-          </template>
-      </el-table-column>
-    </el-table>
-  </template>
+<div id="app">
+    <el-form ref="form" :model="form" label-width="80px">
+        <el-form-item label="视频vid">
+            <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @click="onSubmit">立即创建</el-button>
+            <el-button>取消</el-button>
+        </el-form-item>
+    </el-form>
+    <template>
+        <el-table
+                :data="tableData"
+                style="width: 100%">
+            <el-table-column
+                    prop="aid">
+            </el-table-column>
+            <el-table-column
+                    prop="title">
+                <template slot-scope="scope">
+                    <el-link type="primary" :href="'/play/'+scope.row.id" v-html="scope.row.title"></el-link>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    label="is_completed"
+            >
+                <template slot-scope="scope">
+                    <span v-text="scope.row.is_completed ? '已完成' : '未完成'">1212</span>
+                </template>
+            </el-table-column>
+        </el-table>
+    </template>
 </div>
-    <script src="//unpkg.com/vue/dist/vue.js"></script>
+<script src="//unpkg.com/vue/dist/vue.js"></script>
 <script src="//unpkg.com/element-ui@2.14.0/lib/index.js"></script>
-    <script>
-        let data = {{list|tojson}}
-        console.log(data)
-        var Main = {
-      data() {
-        return {
-          tableData: data
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script>
+    let data = {{list | tojson}}
+    console.log(data)
+    var Main = {
+        data() {
+            return {
+                tableData: data,
+                form:{
+                    name:''
+                }
+            }
+        },
+        methods: {
+            onSubmit(){
+                axios.post('/download_list', this.form)
+                    .then(function (response) {
+                        console.log(response);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
         }
-      }
     }
-var Ctor = Vue.extend(Main)
-new Ctor().$mount('#app')
-    </script>
+    var Ctor = Vue.extend(Main)
+    new Ctor().$mount('#app')
+</script>
 </body>
 </html>

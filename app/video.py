@@ -1,11 +1,11 @@
 import os
 
 from flask import (
-    Blueprint, render_template
+    Blueprint, render_template, request
 )
 
 from app import models_to_dict, thread_download
-from app.model import PlayList, Video
+from app.model import PlayList, Video, get_play_list
 
 bp = Blueprint('video', __name__)
 
@@ -34,4 +34,11 @@ def play(play_id):
 @bp.route("/download_video/<int:id>")
 def download_video(id):
     thread_download(id)
+    return "ok"
+
+@bp.route("/download_list", methods=['POST'])
+def download_list():
+    name = request.get_json()['name']
+    get_play_list(name)
+    # thread_download(id)
     return "ok"
