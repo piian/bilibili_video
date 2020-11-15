@@ -3,10 +3,10 @@ import os
 
 import requests
 from tqdm import tqdm
-from app.model import PlayList, Video
+from model import PlayList, Video
 
 
-class Bilibili():
+class Bilibili:
     next_headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:56.0) Gecko/20100101 Firefox/56.0',
         'Accept': '*/*',
@@ -31,17 +31,21 @@ class Bilibili():
             print(vid['part'])
             self.get_url(vid['cid'], vid['part'], title)
 
+    def get_list_by_mid(self, mid):
+        start_url = ""
+        response = requests.get(start_url).json()
+        print(response)
+
     @staticmethod
     def get_info(cid):
         """获取视频信息"""
         start_url = 'https://api.bilibili.com/x/web-interface/view?aid=' + cid
         response = requests.get(start_url).json()
-        downloadPath = "downloads"
-        print(response)
+        download_path = "downloads"
         title = response['data']['title']
-        if os.path.exists(downloadPath) is False:
-            os.mkdir(downloadPath)
-        title = downloadPath + '/' + title
+        if os.path.exists(download_path) is False:
+            os.mkdir(download_path)
+        title = download_path + '/' + title
         pages = response['data']['pages']
         if os.path.exists(title) is False:
             os.mkdir(title)
@@ -59,7 +63,6 @@ class Bilibili():
         }
         html = requests.get(url_api, headers=headers).json()
         video_list = []
-        # exit()
         if len(html['durl']) == 1:
             # 如果只有一个链接，则表示单视频
             self.download(html['durl'][0]['url'], path +
@@ -76,7 +79,7 @@ class Bilibili():
         return video_list
 
     @staticmethod
-    def checkExists(file):
+    def check_exists(file):
         exists = os.path.exists(file)
         if exists:
             return True
@@ -91,7 +94,6 @@ class Bilibili():
         :param file:
         :param headers:
         """
-        # print(url)
         r = requests.get(url, headers=headers, stream=True, timeout=50)
         # 获取总长度
         length = r.headers['Content-Length']
@@ -116,12 +118,12 @@ class Bilibili():
         # 关闭文件
         f.close()
 
-    def downloadById(self, id):
-        video = Video.select().where(Video.id == id).first()
+    def download_by_id(self, video_id):
+        video = Video.select().where(Video.id == video_id).first()
         play = PlayList.select().where(PlayList.id == video.play_list_id).first()
 
-        print("开始下载"+video.title+"，视频集："+play.title)
-        downloadPath = 'downloads/'+play.title
-        if os.path.exists(downloadPath) is False:
-            os.mkdir(downloadPath)
-        self.get_url(video.cid, video.title, downloadPath)
+        print("开始下载" + video.title + "，视频集：" + play.title)
+        download_path = 'downloads/' + play.title
+        if os.path.exists(download_path) is False:
+            os.mkdir(download_path)
+        self.get_url(video.cid, video.title, download_path)
