@@ -44,7 +44,6 @@ class Video(BaseModel):
     cid = IntegerField(default=0, unique=True)
     is_completed = BooleanField(default=False)
     is_progress = BooleanField(default=False)
-    play_list_id = IntegerField(default=0)
     play_list = ForeignKeyField(PlayList, backref='videos')
     size = IntegerField(default=0)
 
@@ -64,25 +63,32 @@ def get_play_list(bvid):
     start_url = 'https://api.bilibili.com/x/web-interface/view?bvid=' + str(bvid)
     response = requests.get(start_url).json()
     data = response['data']
+    list = PlayList.select(PlayList.aid).where(PlayList.aid == data['aid'])
+    if list.count() == 0:
+        play_list = PlayList.create(aid=data['aid'],
+                        slug=data["bvid"],
+                        title=data['title'],
+                        description=data['desc'],
+                        pic=data['pic'],
+                        author=data['owner']['name'],
+                        mid=data['owner']['mid']
+                        )
 
-    count = PlayList.select(PlayList.aid).where(PlayList.aid == data['aid']).count()
-    if count == 0:
-        print(1)
-        insert = {
-            'aid': data['aid'],
-            'slug': data['bvid'],
-            'title': data['title'],
-            'description': data['desc'],
-            'pic': data['pic'],
-            'author': data['owner']['name'],
-        }
-        play_list = PlayList.insert(insert).execute()
     else:
-        play_list = PlayList.get(PlayList.aid == data['aid'])
+        play_list = list.get()
     for page in data['pages']:
-        print(page['cid'])
         count = Video.select(Video.cid).where(Video.cid == page['cid']).count()
         if count == 0:
             video = Video.create(cid=page['cid'], title=page['part'], is_completed=0, play_list=play_list)
-            print(video.play_list_id)
+            print("play_list_id:"+str(video.play_list_id))
+        # else:
+        #     res = Video.update({Video.play_list_id: play_list.id}).where(Video.cid == page['cid'])
+        #     print(res)
 
+
+if __name__ == '__main__':
+    list = PlayList.select(PlayList.aid).where(PlayList.aid == 83622425)
+    if list.count() != 0:
+        print(list.get())
+    # list = PlayList.create(title="123", aid=123)
+    # Video.create(play_list= list, title="234")

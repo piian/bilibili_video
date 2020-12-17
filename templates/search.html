@@ -44,7 +44,11 @@
 <script>
     function join(bvid) {
         axios.post("/play_list/" + bvid).then((res) => {
-            console.log(res)
+            if (res.status == 200){
+                if (res.data== 'ok'){
+                    alert(res.data)
+                }
+            }
         })
     }
 </script>

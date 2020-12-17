@@ -26,6 +26,7 @@ def search():
         print(aids)
         url = "https://api.bilibili.com/x/space/arc/search?mid=" + request.args.get("keyword")
         response = requests.get(url).json()
+        print(response)
         data = response['data']['list']['vlist']
         for item in data:
             item['is_join'] = str(item['aid']) in aids
