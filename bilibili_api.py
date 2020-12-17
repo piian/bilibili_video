@@ -51,20 +51,39 @@ class Bilibili:
             os.mkdir(title)
         return {'title': title, "pages": [{'part': page['part'], 'cid': page['cid']} for page in pages]}
 
-    def get_url(self, cid, filename, path):
-        """获取每个链接并下载"""
-        params = 'appkey=%s&cid=%s&otype=json&qn=%s&quality=%s&type=' % (
-            self.appkey, cid, 80, 80)
-        sign = hashlib.md5(bytes(params + self.sec, 'utf8')).hexdigest()
-        url_api = 'https://interface.bilibili.com/v2/playurl?%s&sign=%s' % (
-            params, sign)
+    def make_params(self, params):
+        base = {
+            'appkey': self.appkey,
+            "otype": "json"
+        }
+        params.update(base)
+        params = sorted(params.iteritems(), key=lambda d: d[0])
+        list = "&".join([i+"="+str(params.get(i)) for i in params])
+        sign = hashlib.md5(bytes(list + self.sec, 'utf8')).hexdigest()
+        return list + "&sign="+sign
+
+    def get_play_url_by_cid(self, cid):
+        params = self.make_params({"cid": cid, "qn": 80, "quality": 80})
+        print(params)
+        return 'https://interface.bilibili.com/v2/playurl?' + params
+
+    def get_response_by_cid(self, cid):
+        url_api = self.get_play_url_by_cid(cid)
         headers = {
             'Referer': 'www.bilibili.com',  # 注意加上referer
         }
         html = requests.get(url_api, headers=headers).json()
+        return html
+
+    def get_url(self, cid, filename, path):
+        """获取每个链接并下载"""
+        html = self.get_response_by_cid(cid=cid)
+        print(html)
         video_list = []
         if len(html['durl']) == 1:
             # 如果只有一个链接，则表示单视频
+            print(html['durl'][0])
+            Video.update(size=html['durl'][0]['size']).where(Video.cid==cid).execute()
             self.download(html['durl'][0]['url'], path +
                           '/' + filename + '.mp4', self.next_headers)
         else:
@@ -85,6 +104,16 @@ class Bilibili:
             return True
         else:
             return False
+
+    @staticmethod
+    def get_view_by_bvid(bvid):
+        start_url = 'https://api.bilibili.com/x/web-interface/view?bvid=' + str(bvid)
+        return requests.get(start_url).json()
+
+    @staticmethod
+    def search_by_mid(mid):
+        url = "https://api.bilibili.com/x/space/arc/search?mid=" + mid
+        return requests.get(url).json()
 
     @staticmethod
     def download(url, file, headers):
@@ -127,3 +156,6 @@ class Bilibili:
         if os.path.exists(download_path) is False:
             os.mkdir(download_path)
         self.get_url(video.cid, video.title, download_path)
+if __name__ == '__main__':
+    client = Bilibili()
+    client.make_params({"cid":1,"qn":80, "quality":80})
