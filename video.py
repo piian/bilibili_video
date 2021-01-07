@@ -82,8 +82,9 @@ def download_video(video_id: str):
 
 @bp.route("/play_list/<string:bvid>", methods=['POST'])
 def play_list_store(bvid: str) -> str:
-    get_play_list(bvid)
-    return "ok"
+    play_list = get_play_list(bvid)
+    # print(play_list.id)
+    return {"msg":"ok", "data":play_list.id}
 
 
 @bp.route("/download_list/<play_list_id>", methods=['POST'])

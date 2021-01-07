@@ -63,7 +63,7 @@ def get_play_list(bvid):
     start_url = 'https://api.bilibili.com/x/web-interface/view?bvid=' + str(bvid)
     response = requests.get(start_url).json()
     data = response['data']
-    list = PlayList.select(PlayList.aid).where(PlayList.aid == data['aid'])
+    list = PlayList.select().where(PlayList.aid == data['aid'])
     if list.count() == 0:
         play_list = PlayList.create(aid=data['aid'],
                         slug=data["bvid"],
@@ -76,15 +76,19 @@ def get_play_list(bvid):
 
     else:
         play_list = list.get()
+
     for page in data['pages']:
+        print(page['cid'])
         count = Video.select(Video.cid).where(Video.cid == page['cid']).count()
+        print(count)
         if count == 0:
+            print("数据库没有，插入")
             video = Video.create(cid=page['cid'], title=page['part'], is_completed=0, play_list=play_list)
             print("play_list_id:"+str(video.play_list_id))
         # else:
         #     res = Video.update({Video.play_list_id: play_list.id}).where(Video.cid == page['cid'])
         #     print(res)
-
+    return play_list
 
 if __name__ == '__main__':
     list = PlayList.select(PlayList.aid).where(PlayList.aid == 83622425)

@@ -57,7 +57,7 @@ class Bilibili:
             "otype": "json"
         }
         params.update(base)
-        params = sorted(params.iteritems(), key=lambda d: d[0])
+        params = {item:params[item] for item in sorted(params.keys())}
         list = "&".join([i+"="+str(params.get(i)) for i in params])
         sign = hashlib.md5(bytes(list + self.sec, 'utf8')).hexdigest()
         return list + "&sign="+sign
