@@ -1,22 +1,14 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        #app {
-            height: 1200px;
-        }
-    </style>
-</head>
-<body>
-<div id="app" class="container">
+{% extends "base.html" %}
+
+{% block title %}
+{{ play.title }}
+{% endblock %}
+
+{% block header %}
     <h1>{{ play.id }} {{ play.title }} <a href="/" style="float: right;margin-right: 20px;">回到首页</a></h1>
-    <table class="table">
+{% endblock %}
+{% block content %}
+  <table class="table">
         <thead>
         <tr>
             <th>id</th>
@@ -31,7 +23,7 @@
         </thead>
         <tbody>
         {% for video in videos %}
-            <tr class="{{ "success" if video.is_completed else "" }}">
+            <tr class="{{ "success" if video.file_size == video.size else "" }}">
                 <td>{{ video.id }}</td>
                 <td>{{ video.cid }}</td>
                 <td>{{ video.title }}</td>
@@ -46,7 +38,7 @@
                         {% endif %}
         </td>
 
-                <td>{{ "已下载" if video.is_completed else "未下载" }}</td>
+                <td>{{ "已下载" if video.file_size == video.size else "未下载" }}</td>
                 <td onclick="download({{ video.id }})">
                     <button class="btn btn-primary">
                         下载
@@ -56,12 +48,10 @@
         {% endfor %}
         </tbody>
     </table>
+{% endblock %}
 
-</div>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
+{% block js %}
 <script>
-
     function download(id) {
         // 为给定 ID 的 user 创建请求
         axios.get('/download_video/' + id)
@@ -72,7 +62,5 @@
                 console.log(error);
             });
     }
-
 </script>
-</body>
-</html>
+{% endblock %}

@@ -135,7 +135,7 @@ class Bilibili:
         # 打开文件
         f = open(file, 'wb')
         # 初始化进度条并设置标题
-        pbar = tqdm(total=int(length))
+        pbar = tqdm(total=int(length),desc=file,unit_scale=True)
         for chunk in r.iter_content(chunk_size=2048):
             if chunk:
                 # 进度条更新每次数据的长度
