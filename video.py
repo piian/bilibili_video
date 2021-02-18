@@ -32,6 +32,18 @@ def search():
         for item in data:
             item['is_join'] = str(item['aid']) in aids
         return render_template("search.html", list=response['data']['list']['vlist'])
+    elif search_type == 'keyword':
+        # 获取当前视频库的所有视频
+        play_list = PlayList.select(PlayList.aid)
+        aids = [item.aid for item in play_list]
+
+        # 根据用户id获取用户的视频列表
+        response = Bilibili.search_by_keyword(request.args.get("keyword"))
+        data = response['data']['list']['vlist']
+        # 判断是否已经加入下载列表
+        for item in data:
+            item['is_join'] = str(item['aid']) in aids
+        return render_template("search.html", list=response['data']['list']['vlist'])
     else:
         # 获取指定视频集合
         data = Bilibili.get_view_by_bvid(request.args.get("keyword"))['data']

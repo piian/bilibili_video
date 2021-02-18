@@ -117,6 +117,11 @@ class Bilibili:
         return requests.get(url).json()
 
     @staticmethod
+    def search_by_keyword(keyword: str):
+        url = "https://api.bilibili.com/x/space/arc/search?keyword=" + keyword
+        return requests.get(url).json()
+
+    @staticmethod
     def download(url, file, headers):
         """
         下载文件、写入文件到缓存文件、显示当前进度
