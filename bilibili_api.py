@@ -17,6 +17,7 @@ class Bilibili:
         'Origin': 'https://www.bilibili.com',
         'Connection': 'keep-alive',
     }
+    download_path = "/Volumes/WD130/learn_video"
     appkey = 'iVGUTjsxvpLeuDCf'  # appkey
     sec = 'aHRmhWMLkdeMuILqORnYZocwMBpMEOdt'  # 秘钥
 
@@ -41,7 +42,7 @@ class Bilibili:
         """获取视频信息"""
         start_url = 'https://api.bilibili.com/x/web-interface/view?aid=' + cid
         response = requests.get(start_url).json()
-        download_path = "downloads"
+        download_path = Bilibili.download_path
         title = response['data']['title']
         if os.path.exists(download_path) is False:
             os.mkdir(download_path)
@@ -57,10 +58,10 @@ class Bilibili:
             "otype": "json"
         }
         params.update(base)
-        params = {item:params[item] for item in sorted(params.keys())}
-        list = "&".join([i+"="+str(params.get(i)) for i in params])
+        params = {item: params[item] for item in sorted(params.keys())}
+        list = "&".join([i + "=" + str(params.get(i)) for i in params])
         sign = hashlib.md5(bytes(list + self.sec, 'utf8')).hexdigest()
-        return list + "&sign="+sign
+        return list + "&sign=" + sign
 
     def get_play_url_by_cid(self, cid):
         params = self.make_params({"cid": cid, "qn": 80, "quality": 80})
@@ -83,7 +84,7 @@ class Bilibili:
         if len(html['durl']) == 1:
             # 如果只有一个链接，则表示单视频
             print(html['durl'][0])
-            Video.update(size=html['durl'][0]['size']).where(Video.cid==cid).execute()
+            Video.update(size=html['durl'][0]['size']).where(Video.cid == cid).execute()
             self.download(html['durl'][0]['url'], path +
                           '/' + filename + '.mp4', self.next_headers)
         else:
@@ -135,7 +136,7 @@ class Bilibili:
         # 打开文件
         f = open(file, 'wb')
         # 初始化进度条并设置标题
-        pbar = tqdm(total=int(length),desc=file,unit_scale=True)
+        pbar = tqdm(total=int(length), desc=file, unit_scale=True)
         for chunk in r.iter_content(chunk_size=2048):
             if chunk:
                 # 进度条更新每次数据的长度
@@ -152,10 +153,12 @@ class Bilibili:
         play = PlayList.select().where(PlayList.id == video.play_list_id).first()
 
         print("开始下载" + video.title + "，视频集：" + play.title)
-        download_path = 'downloads/' + play.title
+        download_path = Bilibili.download_path + '/' + play.title
         if os.path.exists(download_path) is False:
             os.mkdir(download_path)
         self.get_url(video.cid, video.title, download_path)
+
+
 if __name__ == '__main__':
     client = Bilibili()
-    client.make_params({"cid":1,"qn":80, "quality":80})
+    client.make_params({"cid": 1, "qn": 80, "quality": 80})

@@ -52,7 +52,7 @@ def play(play_id):
     video_dict = models_to_dict(videos)
     client = Bilibili()
     for video in video_dict:
-        file = 'downloads/' + play_list.title + "/" + video['title'] + '.mp4'
+        file = Bilibili.download_path+ '/' + play_list.title + "/" + video['title'] + '.mp4'
 
         if video['size'] == 0:
             html = client.get_response_by_cid(video['cid'])
